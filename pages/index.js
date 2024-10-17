@@ -89,7 +89,7 @@ export default function Home() {
           className="bg-amber-700 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg hover:bg-amber-600 transition-colors duration-300 flex items-center mb-2"
         >
           <BicepsFlexed className="mr-4 h-6 w-6" />
-          I'm the boss, shwty
+          I am the boss, shwty
         </button>
         <div className="flex bg- text-amber-700 text-center py-2 px-6 rounded">
           Generate the closest image using AI and win
