@@ -1,13 +1,13 @@
 import "@/styles/globals.css";
-import { headers } from "next/headers";
 import ContextProvider from '@/context';
+import Layout from '@/components/layout';
 
 export default function App({ Component, pageProps }) {
-  const cookies = headers().get('cookie');
-
   return (
-    <ContextProvider cookies={cookies}>
-      <Component {...pageProps} />
+    <ContextProvider>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </ContextProvider>
   );
 }

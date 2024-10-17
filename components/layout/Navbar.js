@@ -1,8 +1,9 @@
 import Link from 'next/link';
+import ConnectWallet from '../ConnectWallet'
 
 const Navbar = () => {
   return (
-    <nav className="bg-amber-100 text-amber-900 p-4">
+    <nav className="fixed top-0 left-0 right-0 mx-4 bg-white bg-opacity-80 backdrop-filter backdrop-blur-lg text-amber-900 p-4 rounded-2xl z-50">
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-xl font-bold font-mono">
           <Link href="/">
@@ -27,10 +28,8 @@ const Navbar = () => {
             </Link>
           </li>
         </ul>
-        
-        <button className="bg-amber-700 text-amber-100 px-4 py-2 rounded-md hover:bg-amber-800 transition-colors">
-          Connect Wallet
-        </button>
+        {/* <ConnectWallet /> */}
+        <w3m-button balance="hide" />
       </div>
     </nav>
   );
