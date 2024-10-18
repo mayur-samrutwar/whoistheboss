@@ -12,6 +12,7 @@ export default function Home() {
   const [isCheckingEligibility, setIsCheckingEligibility] = useState(false);
   const [dialogMode, setDialogMode] = useState('generate');
   const { data: session } = useSession();
+  const [timeRemaining, setTimeRemaining] = useState('');
 
   const openDialog = () => setIsDialogOpen(true);
   const closeDialog = () => setIsDialogOpen(false);
@@ -34,6 +35,21 @@ export default function Home() {
     };
 
     fetchTodaysImage();
+
+    const updateTimer = () => {
+      const now = new Date();
+      const endOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59));
+      const diff = endOfDay - now;
+      const hours = Math.floor(diff / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      setTimeRemaining(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+    };
+
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const checkEligibility = async () => {
@@ -95,6 +111,9 @@ export default function Home() {
                 height={380}
                 className="relative z-10 rounded-lg shadow-lg border-4 border-amber-700 w-[380px] h-[380px]"
               />
+              <div className="absolute bottom-[-50px] left-0 right-0 text-center text-amber-700 font-bold">
+                Time remaining: {timeRemaining}
+              </div>
             </div>
           </div>
           <div className="flex flex-col">
