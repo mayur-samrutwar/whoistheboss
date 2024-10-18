@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
-
+import WalletAuth from '../WalletAuth';
 const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 mx-4 my-2 bg-amber-100 bg-opacity-80 backdrop-filter backdrop-blur-lg text-amber-900 p-4 rounded-2xl z-50">
@@ -18,7 +18,7 @@ const Navbar = () => {
             </Link>
           </li>
         </ul>
-        <w3m-button balance="hide" />
+        <WalletAuth />
       </div>
     </nav>
   );
