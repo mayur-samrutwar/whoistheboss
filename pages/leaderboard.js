@@ -7,30 +7,18 @@ const dummyData = [
   {
     id: 2,
     date: '2023-04-15',
-    winners: [
-      { address: '0x1234...5678', prompt: 'A futuristic cityscape', image: 'https://picsum.photos/300/300?random=1', score: 95 },
-      { address: '0x2345...6789', prompt: 'An underwater world', image: 'https://picsum.photos/300/300?random=2', score: 92 },
-      { address: '0x3456...7890', prompt: 'A magical forest', image: 'https://picsum.photos/300/300?random=3', score: 90 },
-    ]
+    winner: { address: '0x1234...5678', prompt: 'A futuristic cityscape', image: 'https://picsum.photos/300/300?random=1', score: 95 },
   },
   {
     id: 1,
     date: '2023-04-14',
-    winners: [
-      { address: '0x4567...8901', prompt: 'A steampunk airship', image: 'https://picsum.photos/300/300?random=4', score: 98 },
-      { address: '0x5678...9012', prompt: 'A cyberpunk street scene', image: 'https://picsum.photos/300/300?random=5', score: 96 },
-      { address: '0x6789...0123', prompt: 'An alien landscape', image: 'https://picsum.photos/300/300?random=6', score: 94 },
-    ]
+    winner: { address: '0x4567...8901', prompt: 'A steampunk airship', image: 'https://picsum.photos/300/300?random=4', score: 98 },
   }
 ];
 
 const todaysLeaderboard = {
   date: new Date().toISOString().split('T')[0],
-  winners: [
-    { address: '0x7890...1234', image: 'https://picsum.photos/300/300?random=7', score: 89 },
-    { address: '0x8901...2345', image: 'https://picsum.photos/300/300?random=8', score: 87 },
-    { address: '0x9012...3456', image: 'https://picsum.photos/300/300?random=9', score: 85 },
-  ]
+  winner: { address: '0x7890...1234', image: 'https://picsum.photos/300/300?random=7', score: 89 },
 };
 
 export default function Leaderboard() {
@@ -43,13 +31,10 @@ export default function Leaderboard() {
     );
   };
 
-  const toggleFlip = (contestId, winnerIndex) => {
+  const toggleFlip = (contestId) => {
     setFlippedCards(prev => ({
       ...prev,
-      [contestId]: {
-        ...prev[contestId],
-        [winnerIndex]: !prev[contestId]?.[winnerIndex]
-      }
+      [contestId]: !prev[contestId]
     }));
   };
 
@@ -61,28 +46,24 @@ export default function Leaderboard() {
           <h2 className="text-4xl font-bold text-amber-800 mb-12">Leaderboard</h2>
           
           <div className="w-full mb-12">
-            <h3 className="text-3xl font-semibold text-amber-700 mb-6">Today&apos;s Top Bosses</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {todaysLeaderboard.winners.map((winner, index) => (
-                <div key={index} className="bg-white rounded-lg p-6 shadow-lg">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-3xl font-bold text-amber-600">#{index + 1}</span>
-                    <span className="text-sm font-medium text-amber-500">{winner.address}</span>
-                  </div>
-                  <div className="relative w-full pb-[100%] mb-4">
-                    <img src={winner.image} alt="Generated" className="absolute top-0 left-0 w-full h-full object-cover rounded-lg shadow-md" />
-                  </div>
-                  <div className="text-center">
-                    <span className="text-2xl font-semibold text-amber-700">{winner.score} points</span>
-                  </div>
-                </div>
-              ))}
+            <h3 className="text-3xl font-semibold text-amber-700 mb-6 text-center">Today</h3>
+            <div className="bg-white rounded-lg p-6 shadow-lg max-w-md mx-auto">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-3xl font-bold text-amber-600">#1</span>
+                <span className="text-sm font-medium text-amber-500">{todaysLeaderboard.winner.address}</span>
+              </div>
+              <div className="relative w-full pb-[100%] mb-4">
+                <img src={todaysLeaderboard.winner.image} alt="Generated" className="absolute top-0 left-0 w-full h-full object-cover rounded-lg shadow-md" />
+              </div>
+              <div className="text-center">
+                <span className="text-2xl font-semibold text-amber-700">{todaysLeaderboard.winner.score} points</span>
+              </div>
             </div>
           </div>
 
           <h3 className="text-3xl font-semibold text-amber-700 mb-6">Past Contests</h3>
           {dummyData.map((contest) => (
-            <div key={contest.id} className="w-full mb-8 bg-white rounded-lg p-6 shadow-lg">
+            <div key={contest.id} className="w-full mb-8 bg-white rounded-lg p-6 shadow-lg max-w-md mx-auto">
               <button 
                 onClick={() => toggleContest(contest.id)}
                 className="w-full flex justify-between items-center text-amber-800 font-semibold text-2xl mb-4 hover:text-amber-600 transition-colors duration-300"
@@ -99,39 +80,35 @@ export default function Leaderboard() {
                     transition={{ duration: 0.3 }}
                     className="mt-6 overflow-hidden"
                   >
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                      {contest.winners.map((winner, index) => (
-                        <div key={index} className="group h-[450px] w-full [perspective:1000px]">
-                          <div 
-                            className={`relative h-full w-full rounded-lg shadow-md transition-all duration-500 [transform-style:preserve-3d] ${
-                              flippedCards[contest.id]?.[index] ? '[transform:rotateY(180deg)]' : ''
-                            }`}
-                            onClick={() => toggleFlip(contest.id, index)}
-                          >
-                            {/* Front face */}
-                            <div className="absolute inset-0 h-full w-full rounded-lg bg-amber-50 p-6 [backface-visibility:hidden]">
-                              <div className="flex items-center justify-between mb-4">
-                                <span className="text-3xl font-bold text-amber-600">#{index + 1}</span>
-                                <span className="text-sm font-medium text-amber-500">{winner.address}</span>
-                              </div>
-                              <div className="relative w-full h-[300px] mb-4">
-                                <img src={winner.image} alt="Generated" className="w-full h-full object-cover rounded-lg shadow-md" />
-                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg">
-                                  <span className="text-white text-lg font-semibold">Click to see prompt</span>
-                                </div>
-                              </div>
-                              <div className="text-center mb-4">
-                                <span className="text-2xl font-semibold text-amber-700">{winner.score} points</span>
-                              </div>
-                            </div>
-                            
-                            {/* Back face */}
-                            <div className="absolute inset-0 h-full w-full rounded-lg bg-white p-6 [transform:rotateY(180deg)] [backface-visibility:hidden] flex items-center justify-center">
-                              <p className="text-amber-800 text-center">{winner.prompt}</p>
+                    <div className="group h-[450px] w-full [perspective:1000px]">
+                      <div 
+                        className={`relative h-full w-full rounded-lg shadow-md transition-all duration-500 [transform-style:preserve-3d] ${
+                          flippedCards[contest.id] ? '[transform:rotateY(180deg)]' : ''
+                        }`}
+                        onClick={() => toggleFlip(contest.id)}
+                      >
+                        {/* Front face */}
+                        <div className="absolute inset-0 h-full w-full rounded-lg bg-amber-50 p-6 [backface-visibility:hidden]">
+                          <div className="flex items-center justify-between mb-4">
+                            <span className="text-3xl font-bold text-amber-600">#1</span>
+                            <span className="text-sm font-medium text-amber-500">{contest.winner.address}</span>
+                          </div>
+                          <div className="relative w-full h-[300px] mb-4">
+                            <img src={contest.winner.image} alt="Generated" className="w-full h-full object-cover rounded-lg shadow-md" />
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg">
+                              <span className="text-white text-lg font-semibold">Click to see prompt</span>
                             </div>
                           </div>
+                          <div className="text-center mb-4">
+                            <span className="text-2xl font-semibold text-amber-700">{contest.winner.score} points</span>
+                          </div>
                         </div>
-                      ))}
+                        
+                        {/* Back face */}
+                        <div className="absolute inset-0 h-full w-full rounded-lg bg-white p-6 [transform:rotateY(180deg)] [backface-visibility:hidden] flex items-center justify-center">
+                          <p className="text-amber-800 text-center">{contest.winner.prompt}</p>
+                        </div>
+                      </div>
                     </div>
                     <div className="mt-8 text-center">
                       <button
