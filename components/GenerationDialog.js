@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -7,6 +7,25 @@ export default function GenerationDialog({ isOpen, onClose }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState([]);
   const [prompt, setPrompt] = useState("");
+  const [todaysImage, setTodaysImage] = useState("");
+
+  useEffect(() => {
+    const fetchTodaysImage = async () => {
+      try {
+        const response = await fetch('/api/get-todays-image');
+        if (!response.ok) {
+          throw new Error('Failed to fetch today\'s image');
+        }
+        const data = await response.json();
+        setTodaysImage(data.imageUrl);
+      } catch (error) {
+        console.error('Error fetching today\'s image:', error);
+        setTodaysImage("https://picsum.photos/800/800");
+      }
+    };
+
+    fetchTodaysImage();
+  }, []);
 
   const handleGenerate = async () => {
     if (triesLeft > 0 && prompt.trim() !== "") {
@@ -77,7 +96,7 @@ export default function GenerationDialog({ isOpen, onClose }) {
                   <div className="relative mb-8 mt-12">
                     <div className="absolute top-2 left-2 w-[384px] h-[384px] border-4 border-amber-700 rounded-lg"></div>
                     <img
-                      src="https://picsum.photos/800/800"
+                      src={todaysImage}
                       alt="Photo of the Day"
                       width={380}
                       height={380}

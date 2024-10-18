@@ -33,7 +33,7 @@ export default function Home() {
     <div className="relative">
       <Navbar />
 
-      <main className="bg-amber-100 min-h-screen w-screen flex flex-col items-center pt-24">
+      <main className="bg-white min-h-screen w-screen flex flex-col items-center pt-24">
 
         <div className="container mx-auto px-8 flex justify-between">
           <div className="flex -space-x-48">
@@ -63,7 +63,7 @@ export default function Home() {
                     className="w-full h-auto rounded-lg"
                   />
                   <div className="absolute bottom-2 left-2 text-white font-semibold text-sm">
-                    @user{index + 1}
+                    0x8...u6{index + 1}
                   </div>
                 </div>
               ))}
