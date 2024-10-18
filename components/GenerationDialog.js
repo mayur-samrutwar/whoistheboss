@@ -3,11 +3,11 @@ import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function GenerationDialog({ isOpen, onClose }) {
-  const [triesLeft, setTriesLeft] = useState(3);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState([]);
   const [prompt, setPrompt] = useState("");
   const [todaysImage, setTodaysImage] = useState("");
+  const [promptsRemaining, setPromptsRemaining] = useState(0);
 
   useEffect(() => {
     const fetchTodaysImage = async () => {
@@ -24,12 +24,30 @@ export default function GenerationDialog({ isOpen, onClose }) {
       }
     };
 
+    const fetchUserContestData = async () => {
+      try {
+        const response = await fetch('/api/get-user-contest-data');
+        if (!response.ok) {
+          throw new Error('Failed to fetch user contest data');
+        }
+        const data = await response.json();
+        setPromptsRemaining(data.promptsRemaining);
+        setGeneratedImages(data.prompts.map(prompt => ({
+          src: prompt.imageUrl,
+          closenessPercentage: prompt.closenessScore
+        })));
+        console.log(generatedImages)
+      } catch (error) {
+        console.error('Error fetching user contest data:', error);
+      }
+    };
+
     fetchTodaysImage();
-  }, []);
+    fetchUserContestData();
+  }, [isOpen]);
 
   const handleGenerate = async () => {
-    if (triesLeft > 0 && prompt.trim() !== "") {
-      setTriesLeft(prevTries => prevTries - 1);
+    if (promptsRemaining > 0 && prompt.trim() !== "") {
       setIsGenerating(true);
       
       try {
@@ -48,9 +66,10 @@ export default function GenerationDialog({ isOpen, onClose }) {
         const data = await response.json();
         const newImage = {
           src: data.imageUrl,
-          closenessPercentage: Math.floor(Math.random() * 101)
+          closenessPercentage: data.closenessScore
         };
         setGeneratedImages(prevImages => [...prevImages, newImage]);
+        setPromptsRemaining(data.promptsRemaining);
       } catch (error) {
         console.error('Error generating image:', error);
         // Handle error (e.g., show an error message to the user)
@@ -62,7 +81,6 @@ export default function GenerationDialog({ isOpen, onClose }) {
 
   const handleClose = () => {
     onClose();
-    setTriesLeft(3);
     setIsGenerating(false);
     setGeneratedImages([]);
     setPrompt("");
@@ -106,7 +124,7 @@ export default function GenerationDialog({ isOpen, onClose }) {
                 </div>
                 <div className="w-1/2 pl-8 flex flex-col justify-center">
                   <div className="mb-4 text-amber-700 font-bold">
-                    Tries left: {triesLeft}
+                    Tries left: {promptsRemaining}
                   </div>
                   <div className="relative mb-4 flex space-x-4">
                     {generatedImages.map((image, index) => (
@@ -134,9 +152,9 @@ export default function GenerationDialog({ isOpen, onClose }) {
                   <div className="flex flex-col space-y-4">
                     <button 
                       onClick={handleGenerate}
-                      disabled={triesLeft === 0 || isGenerating || prompt.trim() === ""}
+                      disabled={isGenerating || prompt.trim() === "" || promptsRemaining === 0}
                       className={`bg-amber-700 text-white px-6 py-3 rounded-lg transition-colors duration-300 ${
-                        triesLeft > 0 && !isGenerating && prompt.trim() !== "" ? 'hover:bg-amber-600' : 'opacity-50 cursor-not-allowed'
+                        promptsRemaining > 0 && !isGenerating && prompt.trim() !== "" ? 'hover:bg-amber-600' : 'opacity-50 cursor-not-allowed'
                       }`}
                     >
                       {isGenerating ? 'Generating...' : 'Generate'}
@@ -158,7 +176,7 @@ export default function GenerationDialog({ isOpen, onClose }) {
                       </>
                     )}
                   </div>
-                  {triesLeft === 0 && (
+                  {promptsRemaining === 0 && (
                     <p className="mt-2 text-red-500">No more tries left. See you tomorrow, Shwty!!</p>
                   )}
                 </div>
