@@ -33,7 +33,7 @@ export default async function handler(req, res) {
 
     console.log(`User found: ${JSON.stringify(user)}`);
 
-    const today = new Date().toLocaleDateString('en-GB').split('/').reverse().join('');
+    const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
     console.log(`Today's date: ${today}`);
 
     let canPlay = true;

@@ -18,7 +18,7 @@ export default function StakeDialog({ isOpen, onClose, onSuccess }) {
       const simulatedStakeSuccess = true;
 
       if (simulatedStakeSuccess) {
-        const today = new Date().toLocaleDateString('en-GB').split('/').reverse().join('');
+        const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
         const response = await fetch('/api/update-user-status', {
           method: 'POST',
           headers: {

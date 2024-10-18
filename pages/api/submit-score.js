@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     const { db } = await connectToDatabase();
     const usersCollection = db.collection('users');
 
-    const today = new Date().toLocaleDateString('en-GB').split('/').reverse().join('');
+    const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
 
     const result = await usersCollection.updateOne(
       { 
@@ -38,4 +38,3 @@ export default async function handler(req, res) {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 }
-

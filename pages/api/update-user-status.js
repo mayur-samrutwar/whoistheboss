@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     const { db } = await connectToDatabase();
     const usersCollection = db.collection('users');
 
-    const today = new Date().toLocaleDateString('en-GB').split('/').reverse().join('');
+    const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
     if (contestId !== today) {
       return res.status(400).json({ message: 'Invalid contest ID' });
     }
