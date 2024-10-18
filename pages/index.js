@@ -1,40 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/layout/Navbar";
-import Image from "next/image";
-import {Info, ArrowRight, BicepsFlexed, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, BicepsFlexed } from "lucide-react";
+import GenerationDialog from "../components/GenerationDialog";
 
 export default function Home() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [triesLeft, setTriesLeft] = useState(3);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedImages, setGeneratedImages] = useState([]);
+  const [todaysImage, setTodaysImage] = useState("");
 
   const openDialog = () => setIsDialogOpen(true);
-  const closeDialog = () => {
-    setIsDialogOpen(false);
-    setTriesLeft(3);
-    setIsGenerating(false);
-    setGeneratedImages([]);
-  };
+  const closeDialog = () => setIsDialogOpen(false);
 
-  const handleGenerate = () => {
-    if (triesLeft > 0) {
-      setTriesLeft(prevTries => prevTries - 1);
-      setIsGenerating(true);
-      // Add your generation logic here
-      // When generation is complete, set setIsGenerating(false)
-      // For demonstration, we'll set a random closeness percentage
-      setTimeout(() => {
-        setIsGenerating(false);
-        const newImage = {
-          src: `https://picsum.photos/200/200?random=${generatedImages.length}`,
-          closenessPercentage: Math.floor(Math.random() * 101)
-        };
-        setGeneratedImages(prevImages => [...prevImages, newImage]);
-      }, 2000);
-    }
-  };
+  useEffect(() => {
+    const fetchTodaysImage = async () => {
+      try {
+        const response = await fetch('/api/get-todays-image');
+        if (!response.ok) {
+          throw new Error('Failed to fetch today\'s image');
+        }
+        const data = await response.json();
+        setTodaysImage(data.imageUrl);
+      } catch (error) {
+        console.error('Error fetching today\'s image:', error);
+        // Set a fallback image or show an error message
+        setTodaysImage("https://picsum.photos/800/800");
+      }
+    };
+
+    fetchTodaysImage();
+  }, []);
 
   return (
     <div className="relative">
@@ -51,11 +44,11 @@ export default function Home() {
             <div className="relative mb-8 mt-12">
               <div className="absolute top-2 left-2 w-[384px] h-[384px] border-4 border-amber-700 rounded-lg"></div>
               <img
-                src="https://picsum.photos/800/800"
+                src={todaysImage}
                 alt="Photo of the Day"
                 width={380}
                 height={380}
-                className="relative z-10 rounded-lg shadow-lg border-4 border-amber-700"
+                className="relative z-10 rounded-lg shadow-lg border-4 border-amber-700 w-[380px] h-[380px]"
               />
             </div>
           </div>
@@ -95,79 +88,8 @@ export default function Home() {
           Generate the closest image using AI and win
         </div>
       </div>
-      <AnimatePresence>
-        {isDialogOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-white z-50 overflow-auto"
-          >
-            <button
-              onClick={closeDialog}
-              className="absolute top-4 right-4 text-amber-700 hover:text-amber-600"
-            >
-              <X className="h-8 w-8" />
-            </button>
-            <div className="container mx-auto px-8 py-12 flex flex-col items-center">
-              <h2 className="text-3xl font-bold text-amber-700 mb-12">Prove your prompt skills, shwty</h2>
-              <div className="flex w-full">
-                <div className="w-1/2 pr-8">
-                  <div className="relative mb-8 mt-12">
-                    <div className="absolute top-2 left-2 w-[384px] h-[384px] border-4 border-amber-700 rounded-lg"></div>
-                    <img
-                      src="https://picsum.photos/800/800"
-                      alt="Photo of the Day"
-                      width={380}
-                      height={380}
-                      className="relative z-10 rounded-lg shadow-lg border-4 border-amber-700"
-                    />
-                  </div>
-                </div>
-                <div className="w-1/2 pl-8 flex flex-col justify-center">
-                  <div className="mb-4 text-amber-700 font-bold">
-                    Tries left: {triesLeft}
-                  </div>
-                  <div className="relative mb-4 flex space-x-4">
-                    {generatedImages.map((image, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={image.src}
-                          alt={`Generated Image ${index + 1}`}
-                          className="w-[200px] h-[200px] rounded-lg"
-                        />
-                        <div className="absolute bottom-2 left-2 bg-white text-amber-700 px-2 py-1 rounded-full text-xs">
-                          {image.closenessPercentage}% Close
-                        </div>
-                      </div>
-                    ))}
-                    {isGenerating && (
-                      <div className="w-[200px] h-[200px] bg-gray-200 animate-pulse rounded-lg"></div>
-                    )}
-                  </div>
-                  <textarea
-                    className="w-full h-40 p-4 mb-4 border-2 border-amber-700 rounded-lg resize-none"
-                    placeholder="Enter your prompt here..."
-                  ></textarea>
-                  <button 
-                    onClick={handleGenerate}
-                    disabled={triesLeft === 0 || isGenerating}
-                    className={`bg-amber-700 text-white px-6 py-3 rounded-lg transition-colors duration-300 ${
-                      triesLeft > 0 && !isGenerating ? 'hover:bg-amber-600' : 'opacity-50 cursor-not-allowed'
-                    }`}
-                  >
-                    {isGenerating ? 'Generating...' : 'Generate'}
-                  </button>
-                  {triesLeft === 0 && (
-                    <p className="mt-2 text-red-500">No more tries left. See you tomorrow, Shwty!!</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+      <GenerationDialog isOpen={isDialogOpen} onClose={closeDialog} />
     </div>
   );
 }
