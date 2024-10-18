@@ -61,7 +61,7 @@ export default function Leaderboard() {
           <h2 className="text-4xl font-bold text-amber-800 mb-12">Leaderboard</h2>
           
           <div className="w-full mb-12">
-            <h3 className="text-3xl font-semibold text-amber-700 mb-6">Today's Top Bosses</h3>
+            <h3 className="text-3xl font-semibold text-amber-700 mb-6">Today&apos;s Top Bosses</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {todaysLeaderboard.winners.map((winner, index) => (
                 <div key={index} className="bg-white rounded-lg p-6 shadow-lg">
