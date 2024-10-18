@@ -33,6 +33,9 @@ export default function WalletAuth() {
       }
 
       console.log('Authenticated!');
+
+      // Check if user exists in the database and add if not
+      await ensureUserInDatabase(address);
     } catch (error) {
       console.error('Authentication error:', error);
     }
@@ -78,4 +81,25 @@ export default function WalletAuth() {
       ></span>
     </button>
   );
+}
+
+async function ensureUserInDatabase(address) {
+  try {
+    const response = await fetch('/api/users/ensure', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ address }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to ensure user in database');
+    }
+    const data = await response.json();
+    console.log(data.message);
+  } catch (error) {
+    console.error('Error ensuring user in database:', error);
+    console.error('Error details:', error.message, error.stack);
+    throw new Error('Failed to ensure user in database');
+  }
 }
