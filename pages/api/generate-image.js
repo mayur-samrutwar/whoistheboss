@@ -12,7 +12,29 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Generate the image first
+    // Generate the image using Livepeer API
+    const livepeerResponse = await fetch("https://dream-gateway.livepeer.cloud/text-to-image", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model_id: "SG161222/RealVisXL_V4.0_Lightning",
+        prompt: prompt,
+        width: 1024,
+        height: 1024
+      })
+    });
+
+    if (!livepeerResponse.ok) {
+      throw new Error(`Livepeer API error: ${livepeerResponse.statusText}`);
+    }
+
+    const livepeerData = await livepeerResponse.json();
+    const imageUrl = livepeerData.images[0].url;
+
+    // Comment out OpenAI code
+    /*
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const response = await client.images.generate({
@@ -23,6 +45,7 @@ export default async function handler(req, res) {
     });
 
     const imageUrl = response.data[0].url;
+    */
 
     // Use a fallback URL if NEXTAUTH_URL is not set
     const baseUrl = process.env.NEXTAUTH_URL || `http://localhost:${process.env.PORT || 3003}`;
