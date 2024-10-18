@@ -39,6 +39,7 @@ export default async function handler(req, res) {
     let canPlay = true;
     let promptsRemaining = 3; // Default value
     let hasStaked = false;
+    let hasSubmittedScore = false; // New variable to track score submission
 
     if (user.contests && Array.isArray(user.contests)) {
       const currentContest = user.contests.find(contest => contest.contestId === today);
@@ -46,6 +47,7 @@ export default async function handler(req, res) {
         promptsRemaining = currentContest.promptsRemaining || 0;
         canPlay = promptsRemaining > 0;
         hasStaked = currentContest.staked || false;
+        hasSubmittedScore = currentContest.scoreSubmitted || false; // Check if score has been submitted
       }
     }
 
@@ -53,7 +55,8 @@ export default async function handler(req, res) {
       canPlay: canPlay,
       promptsRemaining: promptsRemaining,
       hasStaked: hasStaked,
-      needsToStake: canPlay && !hasStaked
+      needsToStake: canPlay && !hasStaked,
+      needsToSubmitScore: promptsRemaining === 0 && !hasSubmittedScore // New field to indicate if score submission is needed
     };
 
     console.log(`Response: ${JSON.stringify(response)}`);

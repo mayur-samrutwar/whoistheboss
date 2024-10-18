@@ -4,10 +4,12 @@ import Navbar from "../components/layout/Navbar";
 import { ArrowRight, BicepsFlexed } from "lucide-react";
 import GenerationDialog from "../components/GenerationDialog";
 import StakeDialog from "../components/StakeDialog";
+import SubmitScoreDialog from "../components/SubmitScoreDialog";
 
 export default function Home() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isStakeDialogOpen, setIsStakeDialogOpen] = useState(false);
+  const [isSubmitScoreDialogOpen, setIsSubmitScoreDialogOpen] = useState(false);
   const [todaysImage, setTodaysImage] = useState("");
   const [isCheckingEligibility, setIsCheckingEligibility] = useState(false);
   const { data: session } = useSession();
@@ -16,6 +18,8 @@ export default function Home() {
   const closeDialog = () => setIsDialogOpen(false);
   const openStakeDialog = () => setIsStakeDialogOpen(true);
   const closeStakeDialog = () => setIsStakeDialogOpen(false);
+  const openSubmitScoreDialog = () => setIsSubmitScoreDialogOpen(true);
+  const closeSubmitScoreDialog = () => setIsSubmitScoreDialogOpen(false);
 
   useEffect(() => {
     const fetchTodaysImage = async () => {
@@ -52,8 +56,10 @@ export default function Home() {
         } else {
           openDialog();
         }
+      } else if (data.needsToSubmitScore) {
+        openSubmitScoreDialog();
       } else {
-        alert("You are not eligible to play today.");
+        alert("You have already played shwty, come again tmrw!");
       }
     } catch (error) {
       console.error('Error checking eligibility:', error);
@@ -66,6 +72,11 @@ export default function Home() {
   const handleStakeSuccess = () => {
     closeStakeDialog();
     openDialog();
+  };
+
+  const handleSubmitScoreSuccess = () => {
+    closeSubmitScoreDialog();
+    // You might want to refresh the user status or show a success message here
   };
 
   return (
@@ -143,6 +154,11 @@ export default function Home() {
 
       <GenerationDialog isOpen={isDialogOpen} onClose={closeDialog} />
       <StakeDialog isOpen={isStakeDialogOpen} onClose={closeStakeDialog} onSuccess={handleStakeSuccess} />
+      <SubmitScoreDialog 
+        isOpen={isSubmitScoreDialogOpen} 
+        onClose={closeSubmitScoreDialog} 
+        onSuccess={handleSubmitScoreSuccess}
+      />
     </div>
   );
 }
