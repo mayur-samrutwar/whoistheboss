@@ -56,7 +56,8 @@ export default async function handler(req, res) {
       promptsRemaining: promptsRemaining,
       hasStaked: hasStaked,
       needsToStake: canPlay && !hasStaked,
-      needsToSubmitScore: promptsRemaining === 0 && !hasSubmittedScore // New field to indicate if score submission is needed
+      needsToSubmitScore: promptsRemaining === 0 && !hasSubmittedScore,
+      hasSubmittedScore: hasSubmittedScore
     };
 
     console.log(`Response: ${JSON.stringify(response)}`);

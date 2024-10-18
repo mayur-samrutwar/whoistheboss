@@ -4,22 +4,19 @@ import Navbar from "../components/layout/Navbar";
 import { ArrowRight, BicepsFlexed } from "lucide-react";
 import GenerationDialog from "../components/GenerationDialog";
 import StakeDialog from "../components/StakeDialog";
-import SubmitScoreDialog from "../components/SubmitScoreDialog";
 
 export default function Home() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isStakeDialogOpen, setIsStakeDialogOpen] = useState(false);
-  const [isSubmitScoreDialogOpen, setIsSubmitScoreDialogOpen] = useState(false);
   const [todaysImage, setTodaysImage] = useState("");
   const [isCheckingEligibility, setIsCheckingEligibility] = useState(false);
+  const [dialogMode, setDialogMode] = useState('generate');
   const { data: session } = useSession();
 
   const openDialog = () => setIsDialogOpen(true);
   const closeDialog = () => setIsDialogOpen(false);
   const openStakeDialog = () => setIsStakeDialogOpen(true);
   const closeStakeDialog = () => setIsStakeDialogOpen(false);
-  const openSubmitScoreDialog = () => setIsSubmitScoreDialogOpen(true);
-  const closeSubmitScoreDialog = () => setIsSubmitScoreDialogOpen(false);
 
   useEffect(() => {
     const fetchTodaysImage = async () => {
@@ -54,12 +51,15 @@ export default function Home() {
         if (data.needsToStake) {
           openStakeDialog();
         } else {
+          setDialogMode('generate');
           openDialog();
         }
       } else if (data.needsToSubmitScore) {
-        openSubmitScoreDialog();
+        setDialogMode('submit');
+        openDialog();
       } else {
-        alert("You have already played shwty, come again tmrw!");
+        setDialogMode('submit');
+        openDialog();
       }
     } catch (error) {
       console.error('Error checking eligibility:', error);
@@ -72,11 +72,6 @@ export default function Home() {
   const handleStakeSuccess = () => {
     closeStakeDialog();
     openDialog();
-  };
-
-  const handleSubmitScoreSuccess = () => {
-    closeSubmitScoreDialog();
-    // You might want to refresh the user status or show a success message here
   };
 
   return (
@@ -152,13 +147,8 @@ export default function Home() {
         </div>
       </div>
 
-      <GenerationDialog isOpen={isDialogOpen} onClose={closeDialog} />
+      <GenerationDialog isOpen={isDialogOpen} onClose={closeDialog} mode={dialogMode} />
       <StakeDialog isOpen={isStakeDialogOpen} onClose={closeStakeDialog} onSuccess={handleStakeSuccess} />
-      <SubmitScoreDialog 
-        isOpen={isSubmitScoreDialogOpen} 
-        onClose={closeSubmitScoreDialog} 
-        onSuccess={handleSubmitScoreSuccess}
-      />
     </div>
   );
 }
