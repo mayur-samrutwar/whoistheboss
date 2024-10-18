@@ -68,10 +68,10 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <button className="mt-4 self-end bg-amber-700 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-colors duration-300 flex items-center">
+            {/* <button className="mt-4 self-end bg-amber-700 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-colors duration-300 flex items-center">
               Show All
               <ArrowRight className="ml-2 h-4 w-4" />
-            </button>
+            </button> */}
           </div>
         </div>
 
