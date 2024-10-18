@@ -42,7 +42,7 @@ export default function SubmitScoreDialog({ isOpen, onClose, onSuccess }) {
         <DialogHeader>
           <DialogTitle>Submit Your Score</DialogTitle>
           <DialogDescription>
-            You've used all your prompts for today. Ready to submit your score?
+            You&apos;ve used all your prompts for today. Ready to submit your score?
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

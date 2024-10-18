@@ -52,7 +52,7 @@ export default function StakeDialog({ isOpen, onClose, onSuccess }) {
         <DialogHeader>
           <DialogTitle>Stake to Play</DialogTitle>
           <DialogDescription>
-            You need to stake tokens to participate in today's contest.
+            You need to stake tokens to participate in today&apos;s contest.
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4">
