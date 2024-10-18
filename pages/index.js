@@ -53,7 +53,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex flex-col">
-            <h2 className="text-lg font-bold mb-4 text-amber-700">Today's Top Bosses</h2>
+            <h2 className="text-lg font-bold mb-4 text-amber-700">Today&apos;s Top Bosses</h2>
             <div className="grid grid-cols-2 gap-4">
               {[...Array(4)].map((_, index) => (
                 <div key={index} className="relative">
