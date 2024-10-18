@@ -83,6 +83,7 @@ export default function WalletAuth() {
   );
 }
 
+// Add this new function at the end of the file
 async function ensureUserInDatabase(address) {
   try {
     const response = await fetch('/api/users/ensure', {
@@ -99,7 +100,5 @@ async function ensureUserInDatabase(address) {
     console.log(data.message);
   } catch (error) {
     console.error('Error ensuring user in database:', error);
-    console.error('Error details:', error.message, error.stack);
-    throw new Error('Failed to ensure user in database');
   }
 }

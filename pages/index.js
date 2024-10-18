@@ -1,14 +1,21 @@
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Navbar from "../components/layout/Navbar";
 import { ArrowRight, BicepsFlexed } from "lucide-react";
 import GenerationDialog from "../components/GenerationDialog";
+import StakeDialog from "../components/StakeDialog";
 
 export default function Home() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isStakeDialogOpen, setIsStakeDialogOpen] = useState(false);
   const [todaysImage, setTodaysImage] = useState("");
+  const [isCheckingEligibility, setIsCheckingEligibility] = useState(false);
+  const { data: session } = useSession();
 
   const openDialog = () => setIsDialogOpen(true);
   const closeDialog = () => setIsDialogOpen(false);
+  const openStakeDialog = () => setIsStakeDialogOpen(true);
+  const closeStakeDialog = () => setIsStakeDialogOpen(false);
 
   useEffect(() => {
     const fetchTodaysImage = async () => {
@@ -21,13 +28,45 @@ export default function Home() {
         setTodaysImage(data.imageUrl);
       } catch (error) {
         console.error('Error fetching today\'s image:', error);
-        // Set a fallback image or show an error message
         setTodaysImage("https://picsum.photos/800/800");
       }
     };
 
     fetchTodaysImage();
   }, []);
+
+  const checkEligibility = async () => {
+    setIsCheckingEligibility(true);
+    try {
+      const response = await fetch('/api/get-user-status', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch user status');
+      }
+      const data = await response.json();
+      if (data.canPlay) {
+        if (data.needsToStake) {
+          openStakeDialog();
+        } else {
+          openDialog();
+        }
+      } else {
+        alert("You are not eligible to play today.");
+      }
+    } catch (error) {
+      console.error('Error checking eligibility:', error);
+      alert("An error occurred while checking eligibility.");
+    } finally {
+      setIsCheckingEligibility(false);
+    }
+  };
+
+  const handleStakeSuccess = () => {
+    closeStakeDialog();
+    openDialog();
+  };
 
   return (
     <div className="relative">
@@ -77,19 +116,33 @@ export default function Home() {
 
       </main>
       <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-        <button
-          onClick={openDialog}
-          className="bg-amber-700 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg hover:bg-amber-600 transition-colors duration-300 flex items-center mb-2"
-        >
-          <BicepsFlexed className="mr-4 h-6 w-6" />
-          I am the boss, shwty
-        </button>
+        {session ? (
+          <button
+            onClick={checkEligibility}
+            disabled={isCheckingEligibility}
+            className={`bg-amber-700 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg transition-colors duration-300 flex items-center mb-2 ${
+              isCheckingEligibility ? 'opacity-50 cursor-not-allowed' : 'hover:bg-amber-600'
+            }`}
+          >
+            {isCheckingEligibility ? 'Checking...' : (
+              <>
+                <BicepsFlexed className="mr-4 h-6 w-6" />
+                I am the boss, shwty
+              </>
+            )}
+          </button>
+        ) : (
+          <div className="text-amber-700 text-xl font-bold mb-2">
+            Please connect your wallet to play
+          </div>
+        )}
         <div className="flex bg- text-amber-700 text-center py-2 px-6 rounded">
           Generate the closest image using AI and win
         </div>
       </div>
 
       <GenerationDialog isOpen={isDialogOpen} onClose={closeDialog} />
+      <StakeDialog isOpen={isStakeDialogOpen} onClose={closeStakeDialog} onSuccess={handleStakeSuccess} />
     </div>
   );
 }

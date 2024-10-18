@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
-export default NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Ethereum',
@@ -26,4 +26,6 @@ export default NextAuth({
   session: {
     strategy: 'jwt'
   },
-})
+}
+
+export default NextAuth(authOptions);
