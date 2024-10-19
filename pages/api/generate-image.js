@@ -1,4 +1,5 @@
 import { OpenAI } from 'openai';
+import { compareImages } from '@/lib/compare';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -33,26 +34,16 @@ export default async function handler(req, res) {
     const livepeerData = await livepeerResponse.json();
     const imageUrl = livepeerData.images[0].url;
 
-    // Comment out OpenAI code
-    /*
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    // Get today's image URL
+    const todaysImageResponse = await fetch(`${process.env.NEXTAUTH_URL}/api/get-todays-image`);
+    const todaysImageData = await todaysImageResponse.json();
+    const todaysImageUrl = todaysImageData.imageUrl;
 
-    const response = await client.images.generate({
-      model: "dall-e-3",
-      prompt: prompt,
-      n: 1,
-      size: "1024x1024",
-    });
+    // Compare images and get closeness score
+    const closenessScore = await compareImages(todaysImageUrl, imageUrl);
 
-    const imageUrl = response.data[0].url;
-    */
-
-    // Use a fallback URL if NEXTAUTH_URL is not set
-    const baseUrl = process.env.NEXTAUTH_URL || `http://localhost:${process.env.PORT || 3003}`;
-    console.log('Base URL:', baseUrl); // For debugging
-
-    // Now update the user's prompts with the generated image URL
-    const updateResponse = await fetch(`${baseUrl}/api/update-user-prompts`, {
+    // Now update the user's prompts with the generated image URL and closeness score
+    const updateResponse = await fetch(`${process.env.NEXTAUTH_URL}/api/update-user-prompts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +51,8 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({ 
         promptText: prompt,
-        imageUrl: imageUrl
+        imageUrl: imageUrl,
+        closenessScore: closenessScore
       })
     });
 
@@ -74,7 +66,7 @@ export default async function handler(req, res) {
     res.status(200).json({ 
       imageUrl,
       promptsRemaining: updateData.promptsRemaining,
-      closenessScore: updateData.closenessScore
+      closenessScore: closenessScore
     });
   } catch (error) {
     console.error('Detailed error in generate-image:', error);

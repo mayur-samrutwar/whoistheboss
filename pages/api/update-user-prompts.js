@@ -12,10 +12,10 @@ export default async function handler(req, res) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  const { promptText, imageUrl } = req.body;
+  const { promptText, imageUrl, closenessScore } = req.body;
 
-  if (!promptText || !imageUrl) {
-    return res.status(400).json({ message: 'Missing prompt text or image URL' });
+  if (!promptText || !imageUrl || closenessScore === undefined) {
+    return res.status(400).json({ message: 'Missing prompt text, image URL, or closeness score' });
   }
 
   try {
@@ -42,9 +42,6 @@ export default async function handler(req, res) {
     if (todayContest.promptsRemaining <= 0) {
       return res.status(400).json({ message: 'No prompts remaining for today' });
     }
-
-    // Generate a random closeness score (0-100)
-    const closenessScore = Math.floor(Math.random() * 101);
 
     // Update the user's prompts and decrement promptsRemaining
     const result = await usersCollection.updateOne(
