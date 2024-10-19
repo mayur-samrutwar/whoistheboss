@@ -28,7 +28,8 @@ export default function GenerationDialog({ isOpen, onClose }) {
 
     const fetchUserContestData = async () => {
       try {
-        const response = await fetch('/api/get-user-contest-data');
+        const today = new Date().toLocaleString('en-GB', { timeZone: 'GMT', day: '2-digit', month: '2-digit', year: 'numeric' }).split('/').join('');
+        const response = await fetch(`/api/get-user-contest-data?contestId=${today}`);
         if (!response.ok) {
           throw new Error('Failed to fetch user contest data');
         }

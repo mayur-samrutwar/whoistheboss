@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     const { db } = await connectToDatabase();
     const usersCollection = db.collection('users');
 
-    const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    const today = new Date().toLocaleString('en-GB', { timeZone: 'GMT', day: '2-digit', month: '2-digit', year: 'numeric' }).split('/').join('');
 
     const user = await usersCollection.findOne(
       { 
