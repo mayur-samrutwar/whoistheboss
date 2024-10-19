@@ -33,29 +33,26 @@ export default async function handler(req, res) {
 
     console.log(`User found: ${JSON.stringify(user)}`);
 
-    const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
-    console.log(`Today's date: ${today}`);
+    const today = new Date().toLocaleString('en-GB', { timeZone: 'GMT', day: '2-digit', month: '2-digit', year: 'numeric' }).split('/').join('');
 
-    let canPlay = true;
-    let promptsRemaining = 3; // Default value
+    let canPlay = false;
+    let promptsRemaining = 0;
     let hasStaked = false;
-    let hasSubmittedScore = false; // New variable to track score submission
+    let hasSubmittedScore = false;
 
-    if (user.contests && Array.isArray(user.contests)) {
-      const currentContest = user.contests.find(contest => contest.contestId === today);
-      if (currentContest) {
-        promptsRemaining = currentContest.promptsRemaining || 0;
-        canPlay = promptsRemaining > 0;
-        hasStaked = currentContest.staked || false;
-        hasSubmittedScore = currentContest.scoreSubmitted || false; // Check if score has been submitted
-      }
+    if (user.contests && user.contests[today]) {
+      const currentContest = user.contests[today];
+      promptsRemaining = currentContest.promptsRemaining || 0;
+      canPlay = promptsRemaining > 0;
+      hasStaked = currentContest.staked || false;
+      hasSubmittedScore = currentContest.scoreSubmitted || false;
     }
 
     const response = {
       canPlay: canPlay,
       promptsRemaining: promptsRemaining,
       hasStaked: hasStaked,
-      needsToStake: canPlay && !hasStaked,
+      needsToStake: !hasStaked,
       needsToSubmitScore: promptsRemaining === 0 && !hasSubmittedScore,
       hasSubmittedScore: hasSubmittedScore
     };

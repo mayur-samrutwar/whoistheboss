@@ -19,22 +19,19 @@ export default async function handler(req, res) {
     const today = new Date().toLocaleString('en-GB', { timeZone: 'GMT', day: '2-digit', month: '2-digit', year: 'numeric' }).split('/').join('');
 
     const user = await usersCollection.findOne(
-      { 
-        address: session.address,
-        'contests.contestId': today
-      },
-      { projection: { 'contests.$': 1 } }
+      { address: session.address },
+      { projection: { [`contests.${today}`]: 1 } }
     );
 
-    if (!user || !user.contests || user.contests.length === 0) {
+    if (!user || !user.contests || !user.contests[today]) {
       return res.status(404).json({ message: 'No contest found for today' });
     }
 
-    const todayContest = user.contests[0];
+    const todayContest = user.contests[today];
 
     res.status(200).json({
       promptsRemaining: todayContest.promptsRemaining,
-      prompts: todayContest.prompts
+      prompts: todayContest.prompts || []
     });
   } catch (error) {
     console.error('Error fetching user contest data:', error);

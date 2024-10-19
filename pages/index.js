@@ -63,19 +63,16 @@ export default function Home() {
         throw new Error('Failed to fetch user status');
       }
       const data = await response.json();
-      if (data.canPlay) {
-        if (data.needsToStake) {
-          openStakeDialog();
-        } else {
-          setDialogMode('generate');
-          openDialog();
-        }
+      if (data.needsToStake) {
+        openStakeDialog();
+      } else if (data.canPlay) {
+        setDialogMode('generate');
+        openDialog();
       } else if (data.needsToSubmitScore) {
         setDialogMode('submit');
         openDialog();
       } else {
-        setDialogMode('submit');
-        openDialog();
+        alert("You've already submitted your score for today's contest.");
       }
     } catch (error) {
       console.error('Error checking eligibility:', error);

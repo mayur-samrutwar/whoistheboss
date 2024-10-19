@@ -29,19 +29,28 @@ export default function GenerationDialog({ isOpen, onClose }) {
     const fetchUserContestData = async () => {
       try {
         const today = new Date().toLocaleString('en-GB', { timeZone: 'GMT', day: '2-digit', month: '2-digit', year: 'numeric' }).split('/').join('');
-        const response = await fetch(`/api/get-user-contest-data?contestId=${today}`);
+        const response = await fetch(`/api/get-user-contest-data`);
         if (!response.ok) {
-          throw new Error('Failed to fetch user contest data');
+          if (response.status === 404) {
+            // No contest found for today, set default values
+            setPromptsRemaining(3);
+            setGeneratedImages([]);
+          } else {
+            throw new Error('Failed to fetch user contest data');
+          }
+        } else {
+          const data = await response.json();
+          setPromptsRemaining(data.promptsRemaining);
+          setGeneratedImages(data.prompts.map(prompt => ({
+            src: prompt.imageUrl,
+            closenessPercentage: prompt.closenessScore
+          })));
         }
-        const data = await response.json();
-        setPromptsRemaining(data.promptsRemaining);
-        setGeneratedImages(data.prompts.map(prompt => ({
-          src: prompt.imageUrl,
-          closenessPercentage: prompt.closenessScore
-        })));
-        console.log(generatedImages)
       } catch (error) {
         console.error('Error fetching user contest data:', error);
+        // Set default values in case of error
+        setPromptsRemaining(3);
+        setGeneratedImages([]);
       }
     };
 

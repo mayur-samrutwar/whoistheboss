@@ -26,18 +26,15 @@ export default async function handler(req, res) {
 
     // Find the user and get their current contest status
     const user = await usersCollection.findOne(
-      { 
-        address: session.address,
-        'contests.contestId': today
-      },
-      { projection: { 'contests.$': 1 } }
+      { address: session.address },
+      { projection: { [`contests.${today}`]: 1 } }
     );
 
-    if (!user || !user.contests || user.contests.length === 0) {
+    if (!user || !user.contests || !user.contests[today]) {
       return res.status(404).json({ message: 'No contest found for today' });
     }
 
-    const todayContest = user.contests[0];
+    const todayContest = user.contests[today];
 
     if (todayContest.promptsRemaining <= 0) {
       return res.status(400).json({ message: 'No prompts remaining for today' });
@@ -45,20 +42,17 @@ export default async function handler(req, res) {
 
     // Update the user's prompts and decrement promptsRemaining
     const result = await usersCollection.updateOne(
-      { 
-        address: session.address,
-        'contests.contestId': today
-      },
+      { address: session.address },
       {
         $push: {
-          'contests.$.prompts': {
+          [`contests.${today}.prompts`]: {
             promptText,
             closenessScore,
             imageUrl
           }
         },
         $inc: {
-          'contests.$.promptsRemaining': -1
+          [`contests.${today}.promptsRemaining`]: -1
         }
       }
     );

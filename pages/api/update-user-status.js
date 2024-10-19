@@ -30,12 +30,10 @@ export default async function handler(req, res) {
     const result = await usersCollection.updateOne(
       { 
         address: session.address,
-        'contests.contestId': { $ne: contestId }
       },
       {
-        $push: {
-          contests: {
-            contestId,
+        $set: {
+          [`contests.${contestId}`]: {
             staked: staked,
             promptsRemaining: 3,
             prompts: []
