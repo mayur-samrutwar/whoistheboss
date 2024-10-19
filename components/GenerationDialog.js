@@ -2,6 +2,15 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import { useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi';
+import { parseEther } from 'viem';
+import witbABI from '../contracts/abi/witb.json';
+
+// Contract configuration
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+if (!CONTRACT_ADDRESS) {
+  throw new Error('Contract address not configured in environment variables');
+}
 
 export default function GenerationDialog({ isOpen, onClose }) {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -10,96 +19,162 @@ export default function GenerationDialog({ isOpen, onClose }) {
   const [todaysImage, setTodaysImage] = useState("");
   const [promptsRemaining, setPromptsRemaining] = useState(0);
   const [hasSubmittedScore, setHasSubmittedScore] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const { address } = useAccount();
 
+  const { writeContract, data: hash, error: writeError } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+  });
+
+  const [scoreSubmitted, setScoreSubmitted] = useState(false);
+
+  // Fetch initial data
   useEffect(() => {
-    const fetchTodaysImage = async () => {
+    const fetchInitialData = async () => {
       try {
-        const response = await fetch('/api/get-todays-image');
-        if (!response.ok) {
-          throw new Error('Failed to fetch today\'s image');
-        }
-        const data = await response.json();
-        setTodaysImage(data.imageUrl);
-      } catch (error) {
-        console.error('Error fetching today\'s image:', error);
-        setTodaysImage("https://picsum.photos/800/800");
-      }
-    };
+        const [todaysImageRes, contestDataRes, userStatusRes] = await Promise.all([
+          fetch('/api/get-todays-image'),
+          fetch('/api/get-user-contest-data'),
+          axios.get('/api/get-user-status')
+        ]);
 
-    const fetchUserContestData = async () => {
-      try {
-        const today = new Date().toLocaleString('en-GB', { timeZone: 'GMT', day: '2-digit', month: '2-digit', year: 'numeric' }).split('/').join('');
-        const response = await fetch(`/api/get-user-contest-data`);
-        if (!response.ok) {
-          if (response.status === 404) {
-            // No contest found for today, set default values
-            setPromptsRemaining(3);
-            setGeneratedImages([]);
-          } else {
-            throw new Error('Failed to fetch user contest data');
-          }
+        // Handle today's image
+        if (todaysImageRes.ok) {
+          const { imageUrl } = await todaysImageRes.json();
+          setTodaysImage(imageUrl);
         } else {
-          const data = await response.json();
+          setTodaysImage("https://picsum.photos/800/800");
+        }
+
+        // Handle contest data
+        if (contestDataRes.ok) {
+          const data = await contestDataRes.json();
           setPromptsRemaining(data.promptsRemaining);
           setGeneratedImages(data.prompts.map(prompt => ({
             src: prompt.imageUrl,
             closenessPercentage: prompt.closenessScore
           })));
+          setScoreSubmitted(data.scoreSubmitted);
+        } else if (contestDataRes.status === 404) {
+          setPromptsRemaining(3);
+          setGeneratedImages([]);
+          setScoreSubmitted(false);
         }
+
+        // Handle user status
+        const { data: userStatus } = userStatusRes;
+        setPromptsRemaining(userStatus.promptsRemaining);
+        setScoreSubmitted(userStatus.scoreSubmitted);
       } catch (error) {
-        console.error('Error fetching user contest data:', error);
-        // Set default values in case of error
+        console.error('Error fetching initial data:', error);
         setPromptsRemaining(3);
         setGeneratedImages([]);
       }
     };
 
-    const fetchUserStatus = async () => {
-      try {
-        const response = await axios.get('/api/get-user-status');
-        const data = response.data;
-        setPromptsRemaining(data.promptsRemaining);
-        setHasSubmittedScore(data.hasSubmittedScore);
-      } catch (error) {
-        console.error('Error fetching user status:', error);
-      }
-    };
-
-    fetchTodaysImage();
-    fetchUserContestData();
-    fetchUserStatus();
+    if (isOpen) {
+      fetchInitialData();
+    }
   }, [isOpen]);
 
-  const handleGenerate = async () => {
-    if (promptsRemaining > 0 && prompt.trim() !== "") {
-      setIsGenerating(true);
-      
-      try {
-        const response = await fetch('/api/generate-image', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ prompt }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to generate image');
+  // Handle transaction confirmation
+  useEffect(() => {
+    if (isConfirmed && hash) {
+      const submitScoreToAPI = async () => {
+        try {
+          const response = await axios.post('/api/submit-score');
+          if (response.status === 200) {
+            setHasSubmittedScore(true);
+            setSubmitError("");
+          }
+        } catch (error) {
+          setSubmitError("Score submitted on blockchain, but failed to update our database. Please contact support.");
+          console.error('API Error:', error);
         }
+      };
+      submitScoreToAPI();
+    }
+  }, [isConfirmed, hash]);
 
-        const data = await response.json();
-        const newImage = {
-          src: data.imageUrl,
-          closenessPercentage: data.closenessScore
-        };
-        setGeneratedImages(prevImages => [...prevImages, newImage]);
-        setPromptsRemaining(data.promptsRemaining);
-      } catch (error) {
-        console.error('Error generating image:', error);
-        // Handle error (e.g., show an error message to the user)
-      } finally {
-        setIsGenerating(false);
-      }
+  // Handle write errors
+  useEffect(() => {
+    if (writeError) {
+      console.error('Contract Write Error:', writeError);
+      setSubmitError(writeError.message || "Failed to submit score to blockchain");
+    }
+  }, [writeError]);
+
+  const handleGenerate = async () => {
+    if (promptsRemaining <= 0 || !prompt.trim()) return;
+    
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) throw new Error('Failed to generate image');
+
+      const data = await response.json();
+      const newImage = {
+        src: data.imageUrl,
+        closenessPercentage: data.closenessScore
+      };
+      
+      setGeneratedImages(prev => [...prev, newImage]);
+      setPromptsRemaining(data.promptsRemaining);
+      setPrompt("");
+    } catch (error) {
+      console.error('Generation Error:', error);
+      alert('Failed to generate image. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleSubmitScore = async () => {
+    if (promptsRemaining > 0 || hasSubmittedScore || !generatedImages.length) return;
+
+    try {
+      setSubmitError("");
+      
+      // Generate contest ID (DDMMYYYY format) based on GMT
+      const today = new Date();
+      const contestId = parseInt(
+        today.getUTCDate().toString().padStart(2, '0') +
+        (today.getUTCMonth() + 1).toString().padStart(2, '0') +
+        today.getUTCFullYear()
+      );
+
+      // Find highest scoring prompt
+      const highestScorePrompt = generatedImages.reduce((prev, current) => 
+        (current.closenessPercentage > prev.closenessPercentage) ? current : prev
+      );
+
+      // Round the score without multiplying by 100
+      const scoreForContract = BigInt(Math.round(highestScorePrompt.closenessPercentage));
+
+      // Submit to blockchain
+      await writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: witbABI,
+        functionName: 'submitScore',
+        args: [BigInt(contestId), scoreForContract, highestScorePrompt.src],
+        // Add gas limit if needed
+        // gas: 200000n,
+      });
+
+      setScoreSubmitted(true);
+
+    } catch (error) {
+      console.error('Submit Score Error:', error);
+      setSubmitError(error.message || "Failed to submit score");
+      if (error.code) console.error('Error code:', error.code);
+      if (error.data) console.error('Error data:', error.data);
     }
   };
 
@@ -108,17 +183,7 @@ export default function GenerationDialog({ isOpen, onClose }) {
     setIsGenerating(false);
     setGeneratedImages([]);
     setPrompt("");
-  };
-
-  const handleSubmitScore = async () => {
-    try {
-      const response = await axios.post('/api/submit-score');
-      if (response.status === 200) {
-        setHasSubmittedScore(true);
-      }
-    } catch (error) {
-      console.error('Error submitting score:', error);
-    }
+    setSubmitError("");
   };
 
   return (
@@ -165,7 +230,7 @@ export default function GenerationDialog({ isOpen, onClose }) {
                         className="w-[200px] h-[200px] rounded-lg"
                       />
                       <div className="absolute bottom-2 left-2 bg-white text-amber-700 px-2 py-1 rounded-full text-xs">
-                        {image.closenessPercentage}% Close
+                        {Math.round(image.closenessPercentage)}% Close
                       </div>
                     </div>
                   ))}
@@ -173,6 +238,13 @@ export default function GenerationDialog({ isOpen, onClose }) {
                     <div className="w-[200px] h-[200px] bg-gray-200 animate-pulse rounded-lg"></div>
                   )}
                 </div>
+                
+                {submitError && (
+                  <div className="mb-4 text-red-500 text-sm">
+                    {submitError}
+                  </div>
+                )}
+
                 {promptsRemaining > 0 && (
                   <>
                     <textarea
@@ -183,30 +255,36 @@ export default function GenerationDialog({ isOpen, onClose }) {
                     ></textarea>
                     <button 
                       onClick={handleGenerate}
-                      disabled={isGenerating || prompt.trim() === ""}
+                      disabled={isGenerating || !prompt.trim()}
                       className={`bg-amber-700 text-white px-6 py-3 rounded-lg transition-colors duration-300 ${
-                        !isGenerating && prompt.trim() !== "" ? 'hover:bg-amber-600' : 'opacity-50 cursor-not-allowed'
+                        !isGenerating && prompt.trim() ? 'hover:bg-amber-600' : 'opacity-50 cursor-not-allowed'
                       }`}
                     >
                       {isGenerating ? 'Generating...' : 'Generate'}
                     </button>
                   </>
                 )}
-                {promptsRemaining === 0 && !hasSubmittedScore && (
+
+                {promptsRemaining === 0 && !scoreSubmitted && (
                   <div className="flex flex-col space-y-4">
                     <button
                       onClick={handleSubmitScore}
-                      className="bg-amber-700 text-white px-6 py-3 rounded-lg hover:bg-amber-600 transition-colors duration-300"
+                      disabled={isConfirming || promptsRemaining > 0 || scoreSubmitted}
+                      className={`bg-amber-700 text-white px-6 py-3 rounded-lg transition-colors duration-300 ${
+                        (isConfirming || promptsRemaining > 0 || scoreSubmitted) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-amber-600'
+                      }`}
                     >
-                      Submit Score
+                      {isConfirming ? 'Submitting...' : 'Submit Score'}
                     </button>
                     <p className="text-amber-700 text-sm">The app submits the best score among 3 tries.</p>
                   </div>
                 )}
-                {promptsRemaining === 0 && !hasSubmittedScore && (
+
+                {promptsRemaining === 0 && !scoreSubmitted && (
                   <p className="mt-2 text-red-500">No more tries left. Submit your score!</p>
                 )}
-                {hasSubmittedScore && (
+
+                {scoreSubmitted && (
                   <p className="mt-2 text-amber-700 font-bold">Your score has been submitted. See you tomorrow, Shwty!!</p>
                 )}
               </div>

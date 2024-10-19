@@ -31,7 +31,8 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       promptsRemaining: todayContest.promptsRemaining,
-      prompts: todayContest.prompts || []
+      prompts: todayContest.prompts || [],
+      scoreSubmitted: todayContest.scoreSubmitted || false
     });
   } catch (error) {
     console.error('Error fetching user contest data:', error);

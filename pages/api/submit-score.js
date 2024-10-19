@@ -21,10 +21,10 @@ export default async function handler(req, res) {
     const result = await usersCollection.updateOne(
       { 
         address: session.address,
-        'contests.contestId': today
+        [`contests.${today}`]: { $exists: true }
       },
       { 
-        $set: { 'contests.$.scoreSubmitted': true }
+        $set: { [`contests.${today}.scoreSubmitted`]: true }
       }
     );
 

@@ -36,7 +36,8 @@ export default async function handler(req, res) {
           [`contests.${contestId}`]: {
             staked: staked,
             promptsRemaining: 3,
-            prompts: []
+            prompts: [],
+            scoreSubmitted: false
           }
         }
       },
