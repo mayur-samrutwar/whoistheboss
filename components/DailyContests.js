@@ -1,4 +1,5 @@
 import { Target, Flame, Trophy } from "lucide-react";
+import Link from "next/link";
 
 export default function DailyContests() {
   const dailyContests = [
@@ -8,6 +9,7 @@ export default function DailyContests() {
       description: "Perfect for newcomers. Simple images with guided assistance.",
       entryFee: "0.001 ETH",
       reward: "0.002 ETH",
+      path: "/contests/daily/begineer"
     },
     {
       icon: Flame,
@@ -15,6 +17,7 @@ export default function DailyContests() {
       description: "For experienced artists. Complex images with specific requirements.",
       entryFee: "0.002 ETH",
       reward: "0.005 ETH",
+      path: "/contests/daily/advanced"
     },
     {
       icon: Trophy,
@@ -22,6 +25,7 @@ export default function DailyContests() {
       description: "Elite competition. Master-level images for the best creators.",
       entryFee: "0.01 ETH",
       reward: "0.05 ETH",
+      path: "/contests/daily/pro",
       tag: {
         text: "5x Return",
         color: "bg-amber-500"
@@ -67,9 +71,11 @@ export default function DailyContests() {
                   <span className="text-base font-bold text-green-600">{contest.reward}</span>
                 </div>
               </div>
-              <button className="w-full bg-amber-700 text-white py-3 rounded-xl font-medium hover:bg-amber-800 transition-colors group-hover:shadow-lg">
+                <Link href={contest.path}>
+              <button className="mt-4 w-full bg-amber-700 text-white py-3 rounded-xl font-medium hover:bg-amber-800 transition-colors group-hover:shadow-lg">
                 Enter Now
               </button>
+              </Link>
             </div>
           </div>
         ))}

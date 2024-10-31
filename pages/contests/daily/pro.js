@@ -1,16 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import Link from 'next/link';
-import {
-  BicepsFlexed,
-} from "lucide-react";
-import GenerationDialog from "../components/GenerationDialog";
-import StakeDialog from "../components/StakeDialog";
-import DailyContests from '@/components/DailyContests';
-import SpecialContests from '@/components/SpecialContests';
-import FAQ from '@/components/FAQ';
+import { BicepsFlexed } from "lucide-react";
+import GenerationDialog from "@/components/GenerationDialog";
+import StakeDialog from "@/components/StakeDialog";
 
-export default function Home() {
+export default function PhotoOfTheDay() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isStakeDialogOpen, setIsStakeDialogOpen] = useState(false);
   const [todaysImage, setTodaysImage] = useState("");
@@ -24,6 +18,7 @@ export default function Home() {
   const openStakeDialog = () => setIsStakeDialogOpen(true);
   const closeStakeDialog = () => setIsStakeDialogOpen(false);
 
+  // Copy the useEffect and checkEligibility functions from index.js
   useEffect(() => {
     const fetchTodaysImage = async () => {
       try {
@@ -93,8 +88,8 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col scroll-smooth">
-      {/* Photo of the Day Section with updated fees/rewards */}
+    <div className="relative min-h-screen flex flex-col">
+      <div className="flex-1 pt-24">
       <section className="w-full bg-amber-50/50 py-24">
         <div className="container mx-auto px-8 flex justify-between">
           <div className="flex -space-x-48">
@@ -155,13 +150,22 @@ export default function Home() {
             </div>
 
             {session ? (
-              <Link href="/contests/daily/pro">
-                <button
-                  className="w-full bg-amber-700 text-white text-lg font-medium px-8 py-3 rounded-xl shadow-lg transition-all duration-300 hover:bg-amber-800 hover:shadow-xl transform hover:-translate-y-0.5"
-                >
-                  Enter Now
-                </button>
-              </Link>
+              <button
+                onClick={checkEligibility}
+                disabled={isCheckingEligibility}
+                className={`w-full bg-amber-700 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
+                  isCheckingEligibility 
+                    ? 'opacity-50 cursor-not-allowed' 
+                    : 'hover:bg-amber-600 hover:shadow-xl transform hover:-translate-y-0.5'
+                }`}
+              >
+                {isCheckingEligibility ? 'Checking...' : (
+                  <>
+                    <BicepsFlexed className="mr-4 h-6 w-6" />
+                    I am the boss, shwty
+                  </>
+                )}
+              </button>
             ) : (
               <div className="text-center">
                 <div className="text-amber-700 text-xl font-bold mb-2">
@@ -175,13 +179,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Contests Section */}
-      <section className="w-full bg-white relative">
-        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200"></div>
-        <DailyContests />
-        <SpecialContests />
-      </section>
-      <FAQ />
+      </div>
       <GenerationDialog isOpen={isDialogOpen} onClose={closeDialog} mode={dialogMode} />
       <StakeDialog isOpen={isStakeDialogOpen} onClose={closeStakeDialog} onSuccess={handleStakeSuccess} />
     </div>
