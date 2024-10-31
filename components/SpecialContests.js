@@ -11,7 +11,9 @@ export default function SpecialContests() {
       tag: {
         text: "Most Played",
         color: "bg-amber-500"
-      }
+      },
+      buttonText: "Enter Now",
+      buttonClass: "bg-amber-700 hover:bg-amber-800"
     },
     {
       icon: EyeOff,
@@ -19,6 +21,8 @@ export default function SpecialContests() {
       description: "Generate images without seeing the given image, only with clues",
       entryFee: "0.001 ETH",
       reward: "Top 3 share 0.01 ETH",
+      buttonText: "Coming Soon",
+      buttonClass: "bg-gray-400 cursor-not-allowed"
     },
     {
       icon: Code,
@@ -29,7 +33,9 @@ export default function SpecialContests() {
       tag: {
         text: "Community Choice",
         color: "bg-blue-500"
-      }
+      },
+      buttonText: "Coming Soon",
+      buttonClass: "bg-gray-400 cursor-not-allowed"
     }
   ];
 
@@ -71,8 +77,8 @@ export default function SpecialContests() {
                   <span className="text-base font-bold text-green-600">{contest.reward}</span>
                 </div>
               </div>
-              <button className="w-full bg-amber-700 text-white py-3 rounded-xl font-medium hover:bg-amber-800 transition-colors group-hover:shadow-lg">
-                Enter Now
+              <button className={`w-full ${contest.buttonClass} text-white py-3 rounded-xl font-medium transition-colors group-hover:shadow-lg`}>
+                {contest.buttonText}
               </button>
             </div>
           </div>
@@ -81,4 +87,3 @@ export default function SpecialContests() {
     </div>
   );
 }
-
