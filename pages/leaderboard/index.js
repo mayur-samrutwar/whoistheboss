@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
-import Navbar from "../components/layout/Navbar";
+import Navbar from "@/components/layout/Navbar";
 
 const dummyData = [
   {
@@ -43,20 +43,19 @@ export default function Leaderboard() {
       <Navbar />
       <main className="min-h-screen w-screen flex flex-col items-center pt-24">
         <div className="container mx-auto px-8 py-12 flex flex-col items-center">
-          <h2 className="text-4xl font-bold text-amber-800 mb-12">Leaderboard</h2>
-          
+          <h2 className="text-4xl font-bold text-amber-800 mb-12">Leaderboard</h2>      
           <div className="w-full mb-12">
             <h3 className="text-3xl font-semibold text-amber-700 mb-6 text-center">Today</h3>
             <div className="bg-white rounded-lg p-6 shadow-lg max-w-md mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-3xl font-bold text-amber-600">#1</span>
-                <span className="text-sm font-medium text-amber-500">{todaysLeaderboard.winner.address}</span>
+                <span className="text-sm font-medium text-amber-500">0xfd2A...4e22B</span>
               </div>
               <div className="relative w-full pb-[100%] mb-4">
-                <img src={todaysLeaderboard.winner.image} alt="Generated" className="absolute top-0 left-0 w-full h-full object-cover rounded-lg shadow-md" />
+                <img src="https://obj-store.livepeer.cloud/livepeer-cloud-ai-images/04efc97f/6b3681fa.png" alt="Generated" className="absolute top-0 left-0 w-full h-full object-cover rounded-lg shadow-md" />
               </div>
               <div className="text-center">
-                <span className="text-2xl font-semibold text-amber-700">{todaysLeaderboard.winner.score} points</span>
+                <span className="text-2xl font-semibold text-amber-700">43 points</span>
               </div>
             </div>
           </div>
