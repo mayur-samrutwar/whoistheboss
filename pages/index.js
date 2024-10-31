@@ -143,12 +143,12 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-500">Entry Fee</span>
-                  <span className="text-lg font-bold text-amber-700">0.001 ETH</span>
+                  <span className="text-lg font-bold text-amber-700">0.01 ETH</span>
                 </div>
                 <div className="h-px bg-gray-100"></div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-500">Daily Reward</span>
-                  <span className="text-lg font-bold text-green-600">0.005 ETH</span>
+                  <span className="text-lg font-bold text-green-600">0.05 ETH</span>
                 </div>
               </div>
             </div>

@@ -6,8 +6,8 @@ export default function SpecialContests() {
       icon: Swords,
       title: "1v1 Battle",
       description: "Challenge another player directly in a head-to-head battle.",
-      entryFee: "0.0001 ETH",
-      reward: "0.00015 ETH",
+      entryFee: "0.001 ETH",
+      reward: "0.0015 ETH",
       tag: {
         text: "Most Played",
         color: "bg-amber-500"
