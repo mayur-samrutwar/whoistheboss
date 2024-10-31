@@ -95,7 +95,7 @@ export default function Home() {
   return (
     <div className="relative min-h-screen flex flex-col scroll-smooth">
       {/* Photo of the Day Section with updated fees/rewards */}
-      <section className="w-full bg-amber-50/50 py-24">
+      <section className="w-full bg-amber-50/50 pt-48 pb-24">
         <div className="container mx-auto px-8 flex justify-between">
           <div className="flex -space-x-48">
             <div className="flex flex-col text-5xl font-bold mb-8 text-amber-700 -rotate-90">
