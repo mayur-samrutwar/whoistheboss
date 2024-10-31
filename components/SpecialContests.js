@@ -1,4 +1,5 @@
 import { Swords, EyeOff, Code } from "lucide-react";
+import Link from "next/link";
 
 export default function SpecialContests() {
   const specialContests = [
@@ -13,7 +14,8 @@ export default function SpecialContests() {
         color: "bg-amber-500"
       },
       buttonText: "Enter Now",
-      buttonClass: "bg-amber-700 hover:bg-amber-800"
+      buttonClass: "bg-amber-700 hover:bg-amber-800",
+      link: "/contests/1v1"
     },
     {
       icon: EyeOff,
@@ -77,9 +79,17 @@ export default function SpecialContests() {
                   <span className="text-base font-bold text-green-600">{contest.reward}</span>
                 </div>
               </div>
-              <button className={`w-full ${contest.buttonClass} text-white py-3 rounded-xl font-medium transition-colors group-hover:shadow-lg`}>
-                {contest.buttonText}
-              </button>
+              {contest.link ? (
+                <Link href={contest.link}>
+                  <button className={`w-full ${contest.buttonClass} mt-4 text-white py-3 rounded-xl font-medium transition-colors group-hover:shadow-lg`}>
+                    {contest.buttonText}
+                  </button>
+                </Link>
+              ) : (
+                <button className={`w-full ${contest.buttonClass} text-white py-3 rounded-xl font-medium transition-colors group-hover:shadow-lg`}>
+                  {contest.buttonText}
+                </button>
+              )}
             </div>
           </div>
         ))}
