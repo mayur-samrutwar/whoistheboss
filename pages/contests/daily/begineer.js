@@ -226,7 +226,7 @@ export default function Beginner() {
                   {isCheckingEligibility ? 'Checking...' : (
                     <>
                       <BicepsFlexed className="mr-4 h-6 w-6" />
-                      I'm the Boss
+                      I&apos;m the Boss
                     </>
                   )}
                 </button>
