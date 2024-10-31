@@ -10,8 +10,18 @@ const Navbar = () => {
             WhoIsTheBoss
           </Link>
         </div>
-        
+
         <ul className="flex space-x-6">
+        <li>
+            <Link href="#faq" className="hover:text-amber-700 transition-colors">
+              FAQs
+            </Link>
+          </li>
+          <li>
+            <Link href="/contests" className="hover:text-amber-700 transition-colors">
+              Contests
+            </Link>
+          </li>
           <li>
             <Link href="/leaderboard" className="hover:text-amber-700 transition-colors">
               Leaderboard
