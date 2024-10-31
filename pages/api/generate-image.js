@@ -14,20 +14,20 @@ export default async function handler(req, res) {
 
   try {
     // Initialize OpenAI client
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    // const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    // Generate the image using OpenAI API
-    const openaiResponse = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: prompt,
-      n: 1,
-      size: "1024x1024"
-    });
+    // // Generate the image using OpenAI API
+    // const openaiResponse = await openai.images.generate({
+    //   model: "dall-e-3",
+    //   prompt: prompt,
+    //   n: 1,
+    //   size: "1024x1024"
+    // });
 
-    const imageUrl = openaiResponse.data[0].url;
+    // const imageUrl = openaiResponse.data[0].url;
 
     // Comment out Livepeer API call
-    /*
+    
     // Generate the image using Livepeer API
     const livepeerResponse = await fetch("https://dream-gateway.livepeer.cloud/text-to-image", {
       method: 'POST',
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
 
     const livepeerData = await livepeerResponse.json();
     const imageUrl = livepeerData.images[0].url;
-    */
+    
 
     // Get today's image URL
     const todaysImageResponse = await fetch(`${process.env.NEXTAUTH_URL}/api/get-todays-image`);

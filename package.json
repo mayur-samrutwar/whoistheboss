@@ -36,6 +36,7 @@
     "siwe": "^2.3.2",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^11.0.2",
     "viem": "^2.21.27",
     "wagmi": "^2.12.19"
   },
