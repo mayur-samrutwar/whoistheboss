@@ -5,21 +5,21 @@ export default function DailyContests() {
     {
       icon: Target,
       title: "Beginner Arena",
-      description: "Perfect for newcomers. Simple prompts with guided assistance.",
+      description: "Perfect for newcomers. Simple images with guided assistance.",
       entryFee: "0.0001 ETH",
       reward: "0.0002 ETH",
     },
     {
       icon: Flame,
       title: "Advanced Challenge",
-      description: "For experienced artists. Complex prompts with specific requirements.",
+      description: "For experienced artists. Complex images with specific requirements.",
       entryFee: "0.0002 ETH",
       reward: "0.0005 ETH",
     },
     {
       icon: Trophy,
       title: "Pro League",
-      description: "Elite competition. Master-level prompts for the best creators.",
+      description: "Elite competition. Master-level images for the best creators.",
       entryFee: "0.001 ETH",
       reward: "0.005 ETH",
       tag: {

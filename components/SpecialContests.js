@@ -16,7 +16,7 @@ export default function SpecialContests() {
     {
       icon: EyeOff,
       title: "Blind Prompt",
-      description: "Generate images without seeing other submissions until reveal.",
+      description: "Generate images without seeing the given image, only with clues",
       entryFee: "0.001 ETH",
       reward: "Top 3 share 0.01 ETH",
     },
