@@ -43,8 +43,7 @@ export default function Leaderboard() {
       <Navbar />
       <main className="min-h-screen w-screen flex flex-col items-center pt-24">
         <div className="container mx-auto px-8 py-12 flex flex-col items-center">
-          <h2 className="text-4xl font-bold text-amber-800 mb-12">Leaderboard</h2>
-          
+          <h2 className="text-4xl font-bold text-amber-800 mb-12">Leaderboard</h2>      
           <div className="w-full mb-12">
             <h3 className="text-3xl font-semibold text-amber-700 mb-6 text-center">Today</h3>
             <div className="bg-white rounded-lg p-6 shadow-lg max-w-md mx-auto">
