@@ -148,36 +148,33 @@ export default function Beginner() {
                   className="relative z-10 rounded-lg shadow-lg border-4 border-amber-700 w-[380px] h-[380px]"
                 />
               </div>
-              {session ? (
-                <button
-                  onClick={checkEligibility}
-                  disabled={isCheckingEligibility}
-                  className={`w-full bg-amber-600 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
-                    isCheckingEligibility 
-                      ? 'opacity-50 cursor-not-allowed' 
-                      : 'hover:bg-amber-700 hover:shadow-xl transform hover:-translate-y-0.5'
-                  }`}
-                >
-                  {isCheckingEligibility ? 'Checking...' : (
-                    <>
-                      <BicepsFlexed className="mr-4 h-6 w-6" />
-                      I'm the Boss
-                    </>
-                  )}
-                </button>
-              ) : (
-                <div className="text-center">
-                  <div className="text-amber-700 text-xl font-bold mb-2">
-                    Please connect your wallet
+              {/* Image Tags Section */}
+              <div className="w-full space-y-6 mb-8">
+                {imageTags.map((tag, index) => (
+                  <div key={index} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                    <div 
+                      className="flex justify-between items-center cursor-pointer" 
+                      onClick={() => toggleTag(index)}
+                    >
+                      <h3 className="text-amber-700 font-semibold">{tag.title}</h3>
+                      {expandedTags[index] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                    </div>
+                    {expandedTags[index] && (
+                      <ul className="space-y-2 mt-2">
+                        {tag.lines.map((line, lineIndex) => (
+                          <li key={lineIndex} className="text-sm text-gray-600 flex items-center">
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></div>
+                            {line}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
-                  <p className="text-gray-600 text-sm">
-                    Connect your wallet to start your AI image generation journey
-                  </p>
-                </div>
-              )}
+                ))}
+              </div>
             </div>
 
-            <div className="flex flex-col items-center justify-center max-w-md">
+            <div className="flex flex-col items-center justify-center max-w-md -mt-56">
               {/* Contest Title and Description */}
               <h2 className="text-3xl font-bold text-amber-700 mb-3">Daily Beginner Challenge</h2>
               <p className="text-gray-600 text-center mb-6">
@@ -216,30 +213,33 @@ export default function Beginner() {
                 </div>
               </div>
 
-              {/* Image Tags Section */}
-              <div className="w-full space-y-6 mb-8">
-                {imageTags.map((tag, index) => (
-                  <div key={index} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                    <div 
-                      className="flex justify-between items-center cursor-pointer" 
-                      onClick={() => toggleTag(index)}
-                    >
-                      <h3 className="text-amber-700 font-semibold">{tag.title}</h3>
-                      {expandedTags[index] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                    </div>
-                    {expandedTags[index] && (
-                      <ul className="space-y-2 mt-2">
-                        {tag.lines.map((line, lineIndex) => (
-                          <li key={lineIndex} className="text-sm text-gray-600 flex items-center">
-                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></div>
-                            {line}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+              {session ? (
+                <button
+                  onClick={checkEligibility}
+                  disabled={isCheckingEligibility}
+                  className={`w-full bg-amber-600 text-white text-xl font-bold px-8 py-4 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center ${
+                    isCheckingEligibility 
+                      ? 'opacity-50 cursor-not-allowed' 
+                      : 'hover:bg-amber-700 hover:shadow-xl transform hover:-translate-y-0.5'
+                  }`}
+                >
+                  {isCheckingEligibility ? 'Checking...' : (
+                    <>
+                      <BicepsFlexed className="mr-4 h-6 w-6" />
+                      I'm the Boss
+                    </>
+                  )}
+                </button>
+              ) : (
+                <div className="text-center">
+                  <div className="text-amber-700 text-xl font-bold mb-2">
+                    Please connect your wallet
                   </div>
-                ))}
-              </div>
+                  <p className="text-gray-600 text-sm">
+                    Connect your wallet to start your AI image generation journey
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </section>
