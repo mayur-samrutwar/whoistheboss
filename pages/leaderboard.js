@@ -50,13 +50,13 @@ export default function Leaderboard() {
             <div className="bg-white rounded-lg p-6 shadow-lg max-w-md mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-3xl font-bold text-amber-600">#1</span>
-                <span className="text-sm font-medium text-amber-500">{todaysLeaderboard.winner.address}</span>
+                <span className="text-sm font-medium text-amber-500">0xfd2A...4e22B</span>
               </div>
               <div className="relative w-full pb-[100%] mb-4">
-                <img src={todaysLeaderboard.winner.image} alt="Generated" className="absolute top-0 left-0 w-full h-full object-cover rounded-lg shadow-md" />
+                <img src="https://obj-store.livepeer.cloud/livepeer-cloud-ai-images/04efc97f/6b3681fa.png" alt="Generated" className="absolute top-0 left-0 w-full h-full object-cover rounded-lg shadow-md" />
               </div>
               <div className="text-center">
-                <span className="text-2xl font-semibold text-amber-700">{todaysLeaderboard.winner.score} points</span>
+                <span className="text-2xl font-semibold text-amber-700">43 points</span>
               </div>
             </div>
           </div>
