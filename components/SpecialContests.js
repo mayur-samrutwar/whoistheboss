@@ -6,10 +6,10 @@ export default function SpecialContests() {
       icon: Swords,
       title: "1v1 Battle",
       description: "Challenge another player directly in a head-to-head battle.",
-      entryFee: "0.05 ETH",
-      reward: "Winner takes 0.09 ETH",
+      entryFee: "0.0001 ETH",
+      reward: "0.00015 ETH",
       tag: {
-        text: "2x Return",
+        text: "Most Played",
         color: "bg-amber-500"
       }
     },
@@ -17,14 +17,14 @@ export default function SpecialContests() {
       icon: EyeOff,
       title: "Blind Prompt",
       description: "Generate images without seeing other submissions until reveal.",
-      entryFee: "0.03 ETH",
-      reward: "Top 3 share 0.5 ETH",
+      entryFee: "0.001 ETH",
+      reward: "Top 3 share 0.01 ETH",
     },
     {
       icon: Code,
       title: "Open Source",
-      description: "Community-driven contests with custom rulesets.",
-      entryFee: "Varies",
+      description: "Help AI grow for the betterment of humanity.",
+      entryFee: "Free",
       reward: "Community Pool",
       tag: {
         text: "Community Choice",

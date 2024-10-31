@@ -6,22 +6,22 @@ export default function DailyContests() {
       icon: Target,
       title: "Beginner Arena",
       description: "Perfect for newcomers. Simple prompts with guided assistance.",
-      entryFee: "0.01 ETH",
-      reward: "Up to 0.5 ETH",
+      entryFee: "0.0001 ETH",
+      reward: "0.0002 ETH",
     },
     {
       icon: Flame,
       title: "Advanced Challenge",
       description: "For experienced artists. Complex prompts with specific requirements.",
-      entryFee: "0.05 ETH",
-      reward: "Up to 1.0 ETH",
+      entryFee: "0.0002 ETH",
+      reward: "0.0005 ETH",
     },
     {
       icon: Trophy,
       title: "Pro League",
       description: "Elite competition. Master-level prompts for the best creators.",
-      entryFee: "0.1 ETH",
-      reward: "Up to 2.0 ETH",
+      entryFee: "0.001 ETH",
+      reward: "0.005 ETH",
     },
   ];
 
@@ -49,7 +49,7 @@ export default function DailyContests() {
                   <span className="text-base font-bold text-amber-700">{contest.entryFee}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-500">Potential Reward</span>
+                  <span className="text-sm font-medium text-gray-500">Reward</span>
                   <span className="text-base font-bold text-green-600">{contest.reward}</span>
                 </div>
               </div>
