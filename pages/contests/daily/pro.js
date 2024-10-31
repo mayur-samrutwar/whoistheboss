@@ -162,7 +162,7 @@ export default function PhotoOfTheDay() {
                 {isCheckingEligibility ? 'Checking...' : (
                   <>
                     <BicepsFlexed className="mr-4 h-6 w-6" />
-                    I am the boss, shwty
+                    I&apos;m the boss, shwty
                   </>
                 )}
               </button>
